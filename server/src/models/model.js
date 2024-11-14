@@ -34,6 +34,6 @@ Categorie.belongsTo(Model, {foreignKey: 'categorieId', as: 'models'});
 //Criar a tabela
 //Model.sync();
 //Verificar se há alguma diferença na tabela, realiza a alteração
-Model.sync({alter: true, force:true});
+//Model.sync({alter: true, force:true});
 
 module.exports = Model;

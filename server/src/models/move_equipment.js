@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
-const db = require('../database');
-const Equipment = require('./equipment');
+const db = require('../database/db');
+const Equipment = require('../models/equipment');
 
 const MoveEquipment = db.define('move_equipment', {
     id: {
@@ -36,6 +36,6 @@ const MoveEquipment = db.define('move_equipment', {
 Equipment.hasMany(MoveEquipment, { foreignKey: 'equipmentId', as: 'moves' });
 MoveEquipment.belongsTo(Equipment, { foreignKey: 'equipmentId', as: 'equipment' });
 
-MoveEquipment.sync();
+//MoveEquipment.sync();
 
 module.exports = MoveEquipment;

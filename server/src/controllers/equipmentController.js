@@ -1,6 +1,7 @@
-const {Equipment, MoveEquipment }= require('../models/index');
+const Equipment = require('../models/equipment');
 const Categorie = require('../models/categorie_equipment');
 const Model = require('../models/model');
+const MoveEquipment = require('../models/move_equipment');
 const {object, string, number} = require ('yup');
 const logger = require('../services/logger');
 
