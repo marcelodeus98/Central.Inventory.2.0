@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../database/db');
-const TypeEquipment = require('../models/type_equipment');
-const MoveEquipment = require('../models/move_equipment');
+const Model = require('./model');
 
 const Equipment = db.define('equipments',{
     id:{
@@ -11,7 +10,6 @@ const Equipment = db.define('equipments',{
     },
     mac: {
         type: Sequelize.STRING,
-        allowNull: false,
         unique: true,
     },
     withdrawal_status:{
@@ -23,9 +21,9 @@ const Equipment = db.define('equipments',{
     observation:{
         type: Sequelize.STRING,
     },
-    typeEquipmentId:{
+    ModelId:{
         type: Sequelize.INTEGER,
-        model: TypeEquipment,
+        model: Model,
         key: 'id',
     },
 },
@@ -34,9 +32,8 @@ const Equipment = db.define('equipments',{
     timestamps: true //
 });
 
-TypeEquipment.hasMany(Equipment, {foreignKey: 'typeEquipmentId', as: 'equipments'});
-Equipment.belongsTo(TypeEquipment, {foreignKey: 'typeEquipmentId', as: 'typeEquipment'});
-Equipment.hasMany(MoveEquipment, {foreignKey: 'equipmentId', as: 'moves'});
+Model.hasMany(Equipment, {foreignKey: 'ModelId', as: 'equipments'});
+Equipment.belongsTo(Model, {foreignKey: 'ModelId', as: 'modelEquipment'});
 
 //Criar a tabela
 //Equipment.sync();

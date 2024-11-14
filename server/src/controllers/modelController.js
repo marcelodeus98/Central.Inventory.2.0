@@ -1,4 +1,5 @@
 const Model = require('../models/model');
+const Categorie = require('../models/categorie_equipment');
 const {object, string} = require ('yup');
 const logger = require('../services/logger');
 
@@ -6,7 +7,8 @@ module.exports = {
         async create(req, res){
             const schema = object().shape({
                 mark: string().required('You muster enter the brand'),
-                model: string().required('You need to enter the model')
+                model: string().required('You need to enter the model'), 
+                categorie: number().required('You need to enter the categorie')
             });
     
             try{
@@ -21,13 +23,11 @@ module.exports = {
                     return res.status(409).json({ error: 'Model already registered.'});
                 };
     
-                const {mark, model} = req.body;
+                const {mark, model, categorie} = req.body;
                 const newModel = await Model.create({mark, model});
+                
                 logger.info('Sucessfull register Model');
-                return res.status(201).json({
-                    mark,
-                    model
-                });
+                return res.status(201).json({newModel});
     
             } catch(err){
                 if(err.name === 'ValidationError'){
@@ -43,9 +43,15 @@ module.exports = {
         
         async getAll(req, res){
             try{
-                const models = await Model.findAll();
+                const models = await Model.findAll({
+                    include: {
+                        model: Categorie,
+                        as: 'categories',
+                        attributes: ['id', 'categorie'],
+                    },
+                });
                 logger.info('Success in searching all models');
-                res.status(200).json(models);
+                res.status(200).json({models});
             } catch(err){
                 logger.error('Error in seaching models: ' + err.message);
                 return res.status(500).json({ error: 'Internal server error.'});
@@ -63,7 +69,7 @@ module.exports = {
                 };
 
                 logger.info('Success in searching model');
-                res.status(200).json(model);
+                res.status(200).json({model});
             } catch(err){
                 logger.error('Error in seaching model: ' + err.message);
                 return res.status(500).json({ error: 'Internal server error.'});
@@ -80,14 +86,13 @@ module.exports = {
                 await schema.validate(req.body, {abortEarly: false});
                 
                 const id = req.params.id;
-                console.log(id);
                 const {mark, model} = req.body;
 
                 const modelToAlter = await Model.findByPk(id);
 
                 if(!modelToAlter){
-                    logger.warn('Unable to update, equipment does not exist');
-                    return res.status(404).json({ error: 'Unable to update, equipment does not exist'});
+                    logger.warn('Unable to update, mark/model does not exist');
+                    return res.status(404).json({ error: 'Unable to update, mark/model does not exist'});
                 };
 
                 modelToAlter.mark = mark;
@@ -95,7 +100,7 @@ module.exports = {
 
                 const isSave = await modelToAlter.save();
                 
-                logger.info('Model update.');
+                logger.info('Model updated sucessfully.');
                 return res.status(200).json({modelToAlter});
 
             } catch(err){
@@ -109,8 +114,8 @@ module.exports = {
 
             try{
                 if(!id){
-                    logger.warn('Cannot delete, the equipment does not exist.');
-                    return res.status(401).json({ error: 'Cannot delete, the equipment does not exist.'});
+                    logger.warn('Cannot delete, the mark/model does not exist.');
+                    return res.status(401).json({ error: 'Cannot delete, the mark/model does not exist.'});
                 };
 
                 Model.destroy({where: {id}});
@@ -119,7 +124,7 @@ module.exports = {
                 return res.status(200).json({msg: 'Model deleted.'});
 
             } catch(err){
-                logger.error('Error when delete data: '+ err.messgae);
+                logger.error('Error when delete data: '+ err.message);
                 return res.status(500).json({ error: 'Internal server error.'});
             }
         },

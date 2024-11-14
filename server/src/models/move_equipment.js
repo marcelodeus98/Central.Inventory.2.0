@@ -1,14 +1,14 @@
 const Sequelize = require('sequelize');
 const db = require('../database');
-const Equipment = require('../models/equipment');
+const Equipment = require('./equipment');
 
-const MoveEquipment = db.define('move_equipment' ,{
-    id:{
+const MoveEquipment = db.define('move_equipment', {
+    id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    equipmentId:{
+    equipmentId: {
         type: Sequelize.INTEGER,
         references: {
             model: Equipment,
@@ -18,27 +18,24 @@ const MoveEquipment = db.define('move_equipment' ,{
     },
     usage_status: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false, // Status de uso durante o movimento
     },
-    observation:{
+    observation: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: false, // Observações sobre o movimento
     },
-    date_movement:{
+    date_movement: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.NOW, // Data do movimento
     },
 }, {
     tableName: 'move_equipment',
-    timestamps: true //
 });
 
-Equipment.hasMany(MoveEquipment, {foreignKey: 'equipmentId', as: 'moves'});
-MoveEquipment.belongsTo(Equipment, {foreignKey: 'equipmentId', as: 'equipment'});
+// Relacionamentos
+Equipment.hasMany(MoveEquipment, { foreignKey: 'equipmentId', as: 'moves' });
+MoveEquipment.belongsTo(Equipment, { foreignKey: 'equipmentId', as: 'equipment' });
 
-//Criar a tabela
-//MoveEquipment.sync();
-//Verificar se há alguma diferença na tabela, realiza a alteração
-//MoveEquipment.sync({alter: true, force:true});
+MoveEquipment.sync();
 
 module.exports = MoveEquipment;
