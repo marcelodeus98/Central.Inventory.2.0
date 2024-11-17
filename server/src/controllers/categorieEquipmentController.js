@@ -12,7 +12,7 @@ module.exports = {
             await schema.validate(req.body, {abortEarly: false});
 
             const existingCategorie = await CategorieEquipment.findOne({
-                where: {model: req.body.categorie}
+                where: {categorie: req.body.categorie}
             });
 
             if(existingCategorie){
@@ -24,7 +24,7 @@ module.exports = {
             const newCategorie = CategorieEquipment.create({categorie});
             
             logger.info('Sucessfull register Model');
-            return res.status(201).json({newCategorie});
+            return res.status(201).json({categorie});
         
         } catch(err){
             if(err.name === 'ValidationError'){
@@ -52,7 +52,7 @@ module.exports = {
     async getById(req, res){
         try{
             const id = req.params.id;
-            const categorie = await categorie.findByPk(id);
+            const categorie = await CategorieEquipment.findByPk(id);
 
             if(!categorie){
                 logger.error('Error in seaching categorie: ' + err.message);

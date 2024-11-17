@@ -1,6 +1,6 @@
 const Model = require('../models/model');
 const Categorie = require('../models/categorie_equipment');
-const {object, string} = require ('yup');
+const {object, string, number} = require ('yup');
 const logger = require('../services/logger');
 
 module.exports = {
@@ -8,7 +8,7 @@ module.exports = {
             const schema = object().shape({
                 mark: string().required('You muster enter the brand'),
                 model: string().required('You need to enter the model'), 
-                categorie: number().required('You need to enter the categorie')
+                categorieId: number().required('You need to enter the categorie')
             });
     
             try{
@@ -23,11 +23,11 @@ module.exports = {
                     return res.status(409).json({ error: 'Model already registered.'});
                 };
     
-                const {mark, model, categorie} = req.body;
-                const newModel = await Model.create({mark, model});
+                const {mark, model, categorieId} = req.body;
+                const newModel = await Model.create({mark, model, categorieId});
                 
                 logger.info('Sucessfull register Model');
-                return res.status(201).json({newModel});
+                return res.status(201).json({mark, model, categorieId});
     
             } catch(err){
                 if(err.name === 'ValidationError'){
@@ -44,11 +44,11 @@ module.exports = {
         async getAll(req, res){
             try{
                 const models = await Model.findAll({
-                    include: {
+                    include: [{
                         model: Categorie,
-                        as: 'categories',
-                        attributes: ['id', 'categorie'],
-                    },
+                        as: 'categorie',
+                        attributes: ['categorie']
+                    }],
                 });
                 logger.info('Success in searching all models');
                 res.status(200).json({models});
@@ -61,7 +61,13 @@ module.exports = {
         async getById(req, res){
             try{
                 const id = req.params.id;
-                const model = await Model.findByPk(id);
+                const model = await Model.findByPk(id, {
+                    include: [{
+                        model: Categorie,
+                        as: 'categorie',
+                        attributes: ['categorie']
+                    }],
+                });
 
                 if(!model){
                     logger.error('Error in seaching models: ' + err.message);

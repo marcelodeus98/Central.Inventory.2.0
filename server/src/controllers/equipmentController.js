@@ -9,7 +9,8 @@ module.exports = {
     async create(req, res){
         const schema = object().shape({
             mac: string().required('MAC serial is required'),
-            withdrawal_status: string().required('Withdrawal status is required')
+            withdrawal_status: string().required('Withdrawal status is required'),
+            ModelId: number().required('The number is required')
         });
 
         try{
@@ -24,11 +25,11 @@ module.exports = {
                 return res.status(409).json({ error: 'Equipment already registered.'});
             };
 
-            const{ mac, withdrawal_status } = req.body;
-            const newEquipment = await Equipment.create({mac, withdrawal_status});
+            const{ mac, withdrawal_status, ModelId } = req.body;
+            const newEquipment = await Equipment.create({mac, withdrawal_status,ModelId });
             
             logger.info('Sucessfull register Equipment');
-            return res.status(201).json({newEquipment});
+            return res.status(201).json({mac, withdrawal_status, ModelId});
         } catch(error){
             if(err.name === 'ValidationError'){
                 const errors = err.inner.map(error => error.message);
@@ -44,21 +45,18 @@ module.exports = {
     async getAll (req, res){
         try{
             const equipments = await Equipment.findAll({
-                include:[
-                    {
-                        model: Model,
-                        as: 'modelEquipment',
-                        attributes: ['mark', 'model'],
-                        include: [
-                            {
-                                model: Categorie,
-                                as: 'models',
-                                attributes: ['']
-                            }
-                        ]
-                    } 
-                ]
+                include: [{
+                    model: Model,
+                    as: 'model',
+                    attributes: ['mark', 'model'],
+                    include: {
+                        model: Categorie,
+                        as: 'categorie',
+                        attributes: ['categorie'] 
+                    },
+                }],
             });
+
             logger.info('Success in searching all equipments');
             res.status(200).json({equipments});
         } catch(err){
@@ -70,7 +68,18 @@ module.exports = {
     async getById(req, res){
         try{
             const id = req.params.id;
-            const equipment = await categorie.findByPk(id);
+            const equipment = await Equipment.findByPk(id, {
+                include: [{
+                    model: Model,
+                    as: 'equipments',
+                    attributes: ['mark', 'model'],
+                    include: {
+                        model: Categorie,
+                        as: 'categorie',
+                        attributes: ['categorie'] 
+                    },
+                }],
+            });
 
             if(!equipment){
                 logger.error('Error in seaching equipment: ' + err.message);

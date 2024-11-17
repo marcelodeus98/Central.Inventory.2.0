@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../database/db');
 
-const CategorieEquipment = db.define('categorie_equipment', {
+const CategorieEquipment = db.define('categorie', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -12,7 +12,7 @@ const CategorieEquipment = db.define('categorie_equipment', {
         allowNull: false,
     }
 }, {
-    tableName: 'categorie_equipment',
+    tableName: 'categorie',
 });
 
 

@@ -18,4 +18,4 @@ app.use(routes);
 
 app.listen(port, () => {
     console.log(`Port ${port} is running!`);
-})
+});

@@ -23,8 +23,10 @@ const Equipment = db.define('equipments',{
     },
     ModelId:{
         type: Sequelize.INTEGER,
-        model: Model,
-        key: 'id',
+        references: {
+            model: Model,
+            key: 'id',
+        }
     },
 },
 {
@@ -33,7 +35,7 @@ const Equipment = db.define('equipments',{
 });
 
 Model.hasMany(Equipment, {foreignKey: 'ModelId', as: 'equipments'});
-Equipment.belongsTo(Model, {foreignKey: 'ModelId', as: 'modelEquipment'});
+Equipment.belongsTo(Model, {foreignKey: 'ModelId', as: 'model'});
 
 //Criar a tabela
 //Equipment.sync();

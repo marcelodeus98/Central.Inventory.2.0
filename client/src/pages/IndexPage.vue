@@ -1,7 +1,7 @@
 <template>
   <div class="container">
         <q-p>
-          <h3 class="title">Sistema de Estoque - Fica Company</h3>
+          <h3 class="title">Sistema de Estoque</h3>
         </q-p>
     </div>
 </template>

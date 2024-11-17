@@ -5,9 +5,8 @@ const Categorie = require('./categorie_equipment');
 const Model = db.define('models', {
     id: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
         autoIncrement: true,
-        allowNull: false, // not defind false
-        primaryKey: true
     },
     mark: {
         type: Sequelize.STRING,
@@ -19,8 +18,9 @@ const Model = db.define('models', {
     },
     categorieId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
-            model: Categorie,
+            model: 'categorie', // Nome da tabela
             key: 'id',
         },
     },
@@ -28,8 +28,9 @@ const Model = db.define('models', {
     tableName: 'models',
 });
 
-Model.hasMany(Categorie, {foreignKey: 'categorieId',  as: 'categories'});
-Categorie.belongsTo(Model, {foreignKey: 'categorieId', as: 'models'});
+// Relacionamentos
+Model.belongsTo(Categorie, { foreignKey: 'categorieId', as: 'categorie' });
+Categorie.hasMany(Model, { foreignKey: 'categorieId', as: 'models' });
 
 //Criar a tabela
 //Model.sync();
