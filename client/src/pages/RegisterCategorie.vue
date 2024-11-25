@@ -60,7 +60,7 @@ defineOptions({
 });
 
 const categorie = ref("");
-console.log(categorie);
+
 async function onSubmit() {
   try {
     const response = await api.post("/register/categorie", {
@@ -80,9 +80,9 @@ async function onSubmit() {
     }
     else {
       toast.error("Ocorreu um erro ao cadastrar a categoria.");
-    }
-  }
-}
+    };
+  };
+};
 
 function resetForm() {
   categorie.value = "";

@@ -60,7 +60,7 @@ const linksList = [
     title: "Cadastro de Equipamento",
     caption: "Cadastrar novo equipamento",
     icon: "router",
-    to: "#",
+    to: "/registrar/equipamento",
   },
   {
     title: "Inventário",
